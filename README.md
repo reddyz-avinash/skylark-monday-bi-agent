@@ -1,6 +1,90 @@
 # Skylark Drones — Monday.com Business Intelligence Agent
 
-Founder-facing conversational BI agent for the Skylark Full Stack assignment.
+The agent connects directly to Monday.com, reads data from the **Deals** and **Work Orders** boards, normalizes inconsistent data, performs deterministic BI calculations, and answers founder-level business questions through a conversational interface.
+
+---
+
+## Live Demo
+
+https://skylark-bi-frontend-rphm.onrender.com/
+
+---
+
+## Problem Statement
+
+Founders and leadership teams often need quick answers from operational and sales data without manually filtering spreadsheets or dashboards.
+
+This project provides a conversational interface where a founder can ask questions such as:
+
+- How is our open pipeline?
+- Which sectors have the highest open pipeline?
+- Where are our deals getting stuck?
+- How many work orders are ongoing?
+- How much is still to be billed?
+- Which sectors have the highest receivables?
+- Compare Mining and Renewables across sales and operations.
+- Prepare a leadership update.
+
+The agent converts these questions into analytical operations, queries the relevant Monday.com boards, performs calculations, and presents the results along with relevant data-quality caveats.
+
+---
+
+## Core Architecture
+
+```text
+                         Founder / User
+                               |
+                               v
+                    +---------------------+
+                    |     React UI        |
+                    | Conversational Chat |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    |    FastAPI Backend  |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    |    Query Planner    |
+                    | Intent + Filters    |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    |  Monday.com GraphQL |
+                    |        API          |
+                    +----------+----------+
+                               |
+                 +-------------+-------------+
+                 |                           |
+                 v                           v
+          Deals Board                 Work Orders Board
+                 |                           |
+                 +-------------+-------------+
+                               |
+                               v
+                    +---------------------+
+                    | Data Normalization   |
+                    | Missing Values       |
+                    | Dates / Text         |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    | Deterministic BI    |
+                    | Calculations         |
+                    +----------+----------+
+                               |
+                               v
+                    +---------------------+
+                    | Answer + Metrics     |
+                    | + Caveats            |
+                    +---------------------+
+
+```
+---
 
 ## Core flow
 
@@ -20,6 +104,40 @@ The Excel files are used to populate the two Monday.com boards. They are **not**
 - Clarifying responses for vague questions.
 - Graceful Monday API failure handling.
 - Optional LLM polishing without allowing the LLM to invent business numbers.
+
+---
+
+### Data Flow
+
+The application follows this process:
+```text
+1. User asks a business question
+        |
+        v
+2. Query Planner identifies the intent
+        |
+        v
+3. Relevant Monday.com boards are queried
+        |
+        v
+4. Raw records are converted into structured data
+        |
+        v
+5. Fields are normalized
+        |
+        v
+6. Deterministic BI calculations are performed
+        |
+        v
+7. Data-quality caveats are generated
+        |
+        v
+8. Optional LLM polishing is applied
+        |
+        v
+9. Final answer is displayed in the UI
+```
+---
 
 ## Structure
 
@@ -45,6 +163,17 @@ skylark-bi-agent/
 ├── render.yaml
 └── README.md
 ```
+---
+
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Frontend | React, JavaScript, HTML, CSS, Vite |
+| Backend | Python, FastAPI, Pydantic, Pandas |
+| Integration | Monday.com GraphQL API |
+| AI | Optional OpenAI API integration, configurable model through environment variables |
+| Deployment | Render, GitHub |
 
 ## Backend setup
 
