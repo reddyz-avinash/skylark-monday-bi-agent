@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: skylark-bi-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONDAY_API_TOKEN
+        sync: false
+      - key: MONDAY_DEALS_BOARD_ID
+        sync: false
+      - key: MONDAY_WORK_ORDERS_BOARD_ID
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-5-mini
+
+  - type: web
+    name: skylark-bi-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
